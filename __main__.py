@@ -1,16 +1,31 @@
+# -*- coding: UTF-8 -*-	
 import datetime
 import time
 import os
 import ctypes, sys
-import tkinter as tk
-import _thread
+import platform
+print(platform.system())
 
+#plat_tuple=platform.architecture()
+system=platform.system()
+#plat_version=platform.platform()
+if system == 'Windows':
+    print('this is windows system')
+#    print('version is: '+plat_version)
+    import tkinter as tk
+    import _thread
+
+elif system == 'Linux':
+    print('this is linux system ')
+#    print('version is: '+plat_version)
+    import Tkinter as tk
+    import thread
+    import subprocess
 
 class APP:
     m_runmark=True
     m_value=1
     frame = None
-
 
     def __init__(self,master):
         global frame
@@ -61,7 +76,11 @@ class APP:
         a = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         print("当前时间: %s 时间尺为: %d" %( a ,m_value))
-        _thread.start_new_thread(self.threadloop,("thread_loop",1,))   #创建子线程执行循环动作
+        if system == 'Windows':
+            _thread.start_new_thread(self.threadloop,("thread_loop",1,))   #创建子线程执行循环动作
+        elif system == 'Linux':
+           thread.start_new_thread(self.threadloop,("thread_loop",1,))   #创建子线程执行循环动作
+        
 
     def threadloop ( nloop,nsec,lock):
         a = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -85,26 +104,52 @@ class APP:
             z = startTime[17]+startTime[18]
             z = str(z)
             # print("秒：% s" % str(startTime[17])+startTime[18])
-            _date = 'time  ' + x + ":" + y + ":" + z + "." + z
-            os.system(_date)
+            _date = 'date -s  ' + x + ":" + y + ":" + z + "." + z
+            #os.system(_date)
+            su_root("root123",_date)
+           # os.system("date -s "2015-02-10 23:28:00"")
             time.sleep(1)
 
 
-# 管理员 身份声明
+# Windows 管理员 身份声明
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
     except:
         return False
 
-root = tk.Tk()
-app = APP(root)
-if is_admin():
-    # Code of your program here
-    root.mainloop()
-    root.destroy()
-    pass
-else:
-    # app.exit
-    # Re-run the program with admin rights
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+# Linux root 
+def su_root(root_pwd,rcmd):
+    cmd="su -"
+    p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p.stdin.write(root_pwd.encode('utf-8'))
+    p.stdin.write("\n".encode('utf-8'))
+    # p.stdin.write(rcmd.encode('utf-8'))
+    out,err=p.communicate(rcmd.encode('utf-8'))
+    # p.stdin.flush()
+    if err == None:
+        print(out)
+    else:
+        print(err)
+
+
+if __name__ == '__main__':
+
+    root=tk.Tk()
+    app=APP(root)
+
+    if system == 'Windows':
+        if is_admin():
+            # Code of your program here
+            root.mainloop()
+            root.destroy()
+            pass
+        else:
+            app.exit
+            # Re-run the program with admin rights
+            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+    elif system == 'Linux':
+        root.mainloop()
+        root.destroy()
+        pass
+
