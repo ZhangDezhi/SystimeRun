@@ -104,9 +104,12 @@ class APP:
             z = startTime[17]+startTime[18]
             z = str(z)
             # print("秒：% s" % str(startTime[17])+startTime[18])
-            _date = 'date -s  ' + x + ":" + y + ":" + z + "." + z
-            #os.system(_date)
-            su_root("root123",_date)
+            if system == 'Windows':
+                _date = 'time  ' + x + ":" + y + ":" + z + "." + z 
+                os.system(_date)
+            elif system == 'Linux':
+                _date = 'date -s  ' + x + ":" + y + ":" + z + "." + z
+                su_root("root123",_date)
            # os.system("date -s "2015-02-10 23:28:00"")
             time.sleep(1)
 
