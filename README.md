@@ -8,20 +8,22 @@
 Linux需要安装tk模块 
 
 ```bash
-#python2
- $ yum -y install tkinter  tcl-devel tk-devel
+#RHEL
+$ yum -y install tkinter  tcl-devel tk-devel  #python2
+$ yum -y install python36-tkinter  tcl-devel tk-devel  #python36
 
-#python36
-$  yum -y install python36-tkinter  tcl-devel tk-devel
+#Windows
+
 ```
 
 ## 使用
 ```bash
 
-python run.py
+python __main__.py
 
 ```
 
 ## 恢复时间
 
 Windows下使用脚本 timeSync.bat   
+Linux下(待开发)
